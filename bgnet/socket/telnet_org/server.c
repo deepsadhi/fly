@@ -15,15 +15,6 @@
 #include <sys/wait.h>
 #include <signal.h>
 
-#define READY_OK            0x01
-#define READY_NOT_OK        0x02
-#define READY_MESSAGE       0x03
-#define READY_SEND_MESSAGE  0x04
-#define READY_SEND_OK       0x05
-#define READY_SEND_NOT_OK   0x06
-#define MY_CHAR             'a'
-
-
 #define PORT    "3490"      // the port users wil be connecting to 
 #define BACKLOG 10          // how many pending connection queue will hold
 
@@ -127,13 +118,11 @@ int main(void)
         inet_ntop(their_addr.ss_family, get_in_addr((struct sockaddr *)&their_addr), s, sizeof s);
         printf("server: got connection from %s\n", s);
 
-        char buff[5]={0xFE,'B','C','D','\0'};
-
         if (!fork())
         {
             // this is the child process
             close(sockfd);      // child doesn't need the listener
-            if (send(new_fd, buff, sizeof(buff), 0) == -1)
+            if (send(new_fd, "Hello, world!", 13, 0) == -1)
             {
                 perror("send");
             }

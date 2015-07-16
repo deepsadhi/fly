@@ -13,15 +13,6 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
-#define READY_OK            0x01                                           
-#define READY_NOT_OK        0x02                                           
-#define READY_MESSAGE       0x03                                           
-#define READY_SEND_MESSAGE  0x04                                           
-#define READY_SEND_OK       0x05                                           
-#define READY_SEND_NOT_OK   0x06 
-#define MY_CHAR             'a'
-
-
 #define PORT        "3490"      // the port client will be connecting to
 #define MAXDATASIZE 100         // max number of bytes we can get at once
 
@@ -96,16 +87,9 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    buf[MAXDATASIZE] = '\0';
+    buf[numbytes] = '\0';
 
-    printf("client: received '%s'\n", buf+1);
-    printf("Handshake Value: %x\n", (uint8_t)buf[0]);
-    if (buf == MY_CHAR)
-    {
-        printf("MY_CHAR received\n");
-    } else {
-        printf("MY_CHAR not received\n");
-    }
+    printf("client: received '%s'\n", buf);
 
     close(sockfd);
 

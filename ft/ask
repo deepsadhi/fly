@@ -1,0 +1,2 @@
+address.c: 42
+    *addressInfo    = *addressInformation;
