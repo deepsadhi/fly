@@ -26,28 +26,45 @@ int16_t prepareSocket(struct addrinfo *addressInfo, int *socketFD)
         if ((*socketFD = socket(address->ai_family, address->ai_socktype,
                                 address->ai_protocol)) == -1)                   // Trying to create socket
         {                                                                       // socket creation failed
-            messageCode = SOCKET & NEW_LINE;
+            messageCode = SOCKET | NEW_LINE;
             errorCode   = errno;
             printMessage();
             continue;
         }
 
-        if (setsockopt(*socketFD, SOL_SOCKET, SO_REUSEADDR, &yes,
-                       sizeof(int)) == -1)                                      // Trying for setsockopt
-        {                                                                       // setsockopt failed
-            messageCode = SET_SOCK_OPT & NEW_LINE;
-            errorCode   = errno;
-            printMessage();
-            return 1;
-        }
+        if (messageCode == RECEIVER)                                            // Check if user is receiver or sender
+        {                                                                       // Make connection to socket
 
-        if (bind(*socketFD, address->ai_addr, address->ai_addrlen) == -1)       // Trying to bind
-        {                                                                       // Binging failed
-            close(*socketFD);
-            messageCode = BIND & NEW_LINE;
-            errorCode   = errno;
-            printMessage();
-            continue;
+            while (connect(*socketFD, address->ai_addr, address->ai_addrlen)
+                   == -1);// Trying to connect
+            // if (connect(*socketFD, address->ai_addr, address->ai_addrlen) == -1)// Trying to connect
+            // {                                                                   // Connection failed
+            //     close(*socketFD);
+            //     errorCode   = errno;
+            //     messageCode = CONNECT | NEW_LINE;
+            //     printMessage();
+            //     continue;
+            // }
+        }
+        else
+        {                                                                       // setsockopt and bind socket
+            if (setsockopt(*socketFD, SOL_SOCKET, SO_REUSEADDR, &yes,
+                           sizeof(int)) == -1)                                  // Trying for setsockopt
+            {                                                                   // setsockopt failed
+                messageCode = SET_SOCK_OPT | NEW_LINE;
+                errorCode   = errno;
+                printMessage();
+                return 1;
+            }
+
+            if (bind(*socketFD, address->ai_addr, address->ai_addrlen) == -1)   // Trying to bind
+            {                                                                   // Binging failed
+                close(*socketFD);
+                messageCode = BIND | NEW_LINE;
+                errorCode   = errno;
+                printMessage();
+                continue;
+            }
         }
 
         break;
@@ -56,15 +73,21 @@ int16_t prepareSocket(struct addrinfo *addressInfo, int *socketFD)
     freeaddrinfo(addressInfo);                                                  // Release memory
 
     if (address == NULL)
-    {                                                                           // Binding failed
-        messageCode = BIND_FAIL & NEW_LINE;
-        return BIND_FAIL;
+    {
+        if (messageCode == RECEIVER)
+        {                                                                       // Receiver connection failed
+            messageCode = CONNECTION_FAILED | NEW_LINE;
+            return CONNECTION_FAILED;
+        }
+        else
+        {                                                                       // Sender binding failed
+            messageCode = BIND_FAIL | NEW_LINE;
+            return BIND_FAIL;
+        }
     }
     else
     {                                                                           // Binding success
         return OK;
     }
-
-
 
 }

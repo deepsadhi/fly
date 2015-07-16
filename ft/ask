@@ -1,2 +1,13 @@
 address.c: 42
     *addressInfo    = *addressInformation;
+
+print.c: >-= 16
+
+send.c: ~14
+    void *
+
+send.c: ~53
+    malloc
+
+send.c: 64
+    exit(0)

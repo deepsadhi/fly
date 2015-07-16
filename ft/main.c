@@ -12,7 +12,8 @@ void printMessage();
 int16_t getAddress(char *ip, struct addrinfo *addressInfo);
 int16_t prepareSocket(struct addrinfo *addressInfo, int *socketFD);
 int16_t prepareListen(int *socketFD);
-int16_t readySend(int *socketFD);
+int16_t sendFile(int *socketFD);
+int16_t receiveFile(int *socketFD);
 
 int         errorCode         = OK;                                             // Global variable to hold error code
 int8_t      messageCode       = OK;                                             // Global variable to hold message code
@@ -24,37 +25,35 @@ int main(int argc, char *argv[])
 
     addressInfo = (struct addrinfo *)malloc(sizeof(struct addrinfo));           // Allocate memory
 
-    if (argc < 1 || argc == 2 || argc > 3)
+    if (argc < 2 || argc > 3)
     {
         messageCode = ARGC | NEW_LINE;
         printMessage();
-        return 0;
+        return ARGC;
     }
 
     switch (argc)
     {                                                                           // Receiving mode 
-        case 1:
+        case 2:
         {
-            if (getAddress(NULL, addressInfo) != OK)
+            if (getAddress(argv[1], addressInfo) != OK)
             {
                 printMessage();
                 return ADDRESS;
             }
 
+            messageCode = RECEIVER;
             if (prepareSocket(addressInfo, &socketFD)  != OK)
             {
                 printMessage();
                 return BIND_FAIL;
             }
 
-            if (prepareListen(&socketFD) != OK)
+            if (receiveFile(&socketFD))
             {
                 printMessage();
-                return LISTEN;
+                return RECEIVE;
             }
-
-            messageCode = SEND_READY | NEW_LINE;
-            printMessage();
 
             break;
         }
@@ -66,10 +65,23 @@ int main(int argc, char *argv[])
                 printMessage();
                 return ADDRESS;
             }
+
             if (prepareSocket(addressInfo, &socketFD) != OK)
             {
                 printMessage();
                 return BIND_FAIL;
+            }
+
+            if (prepareListen(&socketFD) != OK)
+            {
+                printMessage();
+                return LISTEN;
+            }
+
+            if (sendFile(&socketFD) != OK)
+            {
+                printMessage();
+                return SEND;
             }
 
             break;

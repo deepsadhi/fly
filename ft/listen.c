@@ -37,7 +37,6 @@ int16_t prepareListen(int *socketFD)
         return SIGACTION;
     }
 
-
     return OK;
 }
 

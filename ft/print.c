@@ -20,15 +20,19 @@ void printMessage()
  /* List of all the possible message to be displayed are listed here
   * Message code is enlisted in message.h
   */
-    message[ARGC]           = "Usage: fly [IP] [Filename]";
-    message[ADDRESS]        = "getaddrinfo";
-    message[SOCKET]         = "socket";
-    message[SET_SOCK_OPT]   = "setsockopt";
-    message[BIND]           = "bind";
-    message[BIND_FAIL]      = "bind failed";
-    message[LISTEN]         = "backlog";
-    message[SIGACTION]      = "sigaction";
-    message[SEND_READY]     = "Sender";
+    message[ARGC]               = "Usage: fly [IP] [Filename]";
+    message[ADDRESS]            = "getaddrinfo";
+    message[SOCKET]             = "socket";
+    message[SET_SOCK_OPT]       = "setsockopt";
+    message[BIND]               = "bind";
+    message[BIND_FAIL]          = "sender binding failed";
+    message[LISTEN]             = "backlog";
+    message[SIGACTION]          = "sigaction";
+    message[SEND]               = "send";
+    message[ACCEPT]             = "accept";
+    message[RECEIVE]            = "receive";
+    message[CONNECT]            = "connect";
+    message[CONNECTION_FAILED]  = "receiver connection failed";
 
     if (errorCode == OK)
     {
@@ -58,4 +62,9 @@ void printMessage()
 
     errorCode   = OK;
     messageCode = OK;
+}
+
+void print(char *message)
+{
+    fprintf(stdout, "%s", (char *)message);
 }
