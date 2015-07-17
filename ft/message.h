@@ -24,5 +24,11 @@
     #define     RECEIVER            0x0B                                        // User is receiver
     #define     CONNECT             0x0C                                        // Error on connecting
     #define     CONNECTION_FAILED   0x0D                                        // Receiver connection failed
+    #define     FILE_OPEN           0x0E                                        // File open error
+
+    #define     IS_RECEIVER_READY   0x0F                                        // Is receiver ready?
+    #define     RECEIVER_IS_READY   0x10                                        // Receiver is ready
+    #define     DATA_SEND           0x11                                        // Data send
+    #define     DATA_RECEIVED       0x12                                        // Data received
 
 #endif

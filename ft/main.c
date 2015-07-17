@@ -12,8 +12,9 @@ void printMessage();
 int16_t getAddress(char *ip, struct addrinfo *addressInfo);
 int16_t prepareSocket(struct addrinfo *addressInfo, int *socketFD);
 int16_t prepareListen(int *socketFD);
-int16_t sendFile(int *socketFD);
+int16_t sendFile(int *socketFD, const char *fileName);
 int16_t receiveFile(int *socketFD);
+int16_t fileOpen(const char *fileName);
 
 int         errorCode         = OK;                                             // Global variable to hold error code
 int8_t      messageCode       = OK;                                             // Global variable to hold message code
@@ -60,6 +61,12 @@ int main(int argc, char *argv[])
 
         case 3:
         {                                                                       // Sending mode
+            if (fileOpen(argv[2]) != OK)
+            {
+                printMessage();
+                return FILE_OPEN;
+            }
+
             if (getAddress(argv[1], addressInfo) != OK)
             {
                 printMessage();
@@ -78,7 +85,7 @@ int main(int argc, char *argv[])
                 return LISTEN;
             }
 
-            if (sendFile(&socketFD) != OK)
+            if (sendFile(&socketFD, argv[2]) != OK)
             {
                 printMessage();
                 return SEND;

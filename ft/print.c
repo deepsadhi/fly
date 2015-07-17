@@ -9,7 +9,7 @@
 #include "include.h"                                                            // For global error and message code
 #include "message.h"                                                            // Message codes
 
-#define     MAX_MESSAGE     100                                                 // Max number of message 
+#define     MAX_MESSAGE     100                                                 // Max number of message
 
 void printMessage()
 {
@@ -33,6 +33,11 @@ void printMessage()
     message[RECEIVE]            = "receive";
     message[CONNECT]            = "connect";
     message[CONNECTION_FAILED]  = "receiver connection failed";
+    message[FILE_OPEN]          = "fopen";
+    message[IS_RECEIVER_READY]  = "Is receiver ready?";
+    message[RECEIVER_IS_READY]  = "Receiver is ready";
+    message[DATA_SEND]          = "Data send";
+    message[DATA_RECEIVED]      = "Data received";
 
     if (errorCode == OK)
     {
@@ -51,7 +56,7 @@ void printMessage()
         {
             fprintf(stdout, "%s: %s",
                     (char *)message[(messageCode & REMOVE_NEW_LINE)],           // Message
-                    (char *)strerror(errorCode));                               // Error description 
+                    (char *)strerror(errorCode));                               // Error description
         }
     }
 
