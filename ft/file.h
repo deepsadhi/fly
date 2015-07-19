@@ -2,6 +2,6 @@
 
     #define     __FILE_H
 
-    #define     BUFFER_SIZE     2
+    #define     BUFFER_SIZE     8
 
 #endif

@@ -13,12 +13,12 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
-#define READY_OK            0x01                                           
-#define READY_NOT_OK        0x02                                           
-#define READY_MESSAGE       0x03                                           
-#define READY_SEND_MESSAGE  0x04                                           
-#define READY_SEND_OK       0x05                                           
-#define READY_SEND_NOT_OK   0x06 
+#define READY_OK            0x01
+#define READY_NOT_OK        0x02
+#define READY_MESSAGE       0x03
+#define READY_SEND_MESSAGE  0x04
+#define READY_SEND_OK       0x05
+#define READY_SEND_NOT_OK   0x06
 #define MY_CHAR             'a'
 
 
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     memset(&hints, 0, sizeof hints);
     hints.ai_family     = AF_UNSPEC;
     hints.ai_socktype   = SOCK_STREAM;
-    
+
     if ((rv = getaddrinfo(argv[1], PORT, &hints, &servinfo)) != 0)
     {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
     }
 
     // loop through al the results and connect to the first we can
-    for(p = servinfo; p != NULL; p = p->ai_next) 
+    for(p = servinfo; p != NULL; p = p->ai_next)
     {
         if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
         {
@@ -113,4 +113,4 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-    
+

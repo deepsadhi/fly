@@ -18,59 +18,36 @@ int16_t receiveFile(int *socketFD)
 {
     // char buf[MAXDATASIZE];
     // char                    *message;                                           // Stores message
-    // ssize_t                 byteReceive;
+    ssize_t                 byteReceive;
     char                    *buffer;
 
-    buffer = (char *)malloc(2 * sizeof(char));
-    if (recv(*socketFD, buffer, 1, 0) == -1)
+    buffer = (char *)malloc(sizeof(char));
+
+
+    FILE *fp;
+    fp = fopen("tmp", "w+");
+
+
+    if ((byteReceive = recv(*socketFD, buffer, BUFFER_SIZE, 0)) == -1)
     {
         errorCode   = errno;
-        messageCode = IS_RECEIVER_READY;
-        return IS_RECEIVER_READY;
+        messageCode = RECEIVE | NEW_LINE;
+        return RECEIVE;
     }
-    printf("message %d\n", (uint8_t)buffer[0]);
-    printf("sequence %d\n", (uint8_t)buffer[1]);
+        // printf("%c", buf[0] );
+       fwrite(buffer, 1, sizeof(buffer), fp);
+    while (*buffer != EOF)
+    {
+        byteReceive = recv(*socketFD, buffer, BUFFER_SIZE, 0);
+       fwrite(buffer, 1, sizeof(buffer), fp);
+        // printf("%c", buf[0] );
+        // errorCode   = errno;
+        // messageCode = RECEIVE | NEW_LINE;
+        // return RECEIVE;
+    }
 
-
-
-    // message = (char *)malloc(sizeof(char));
-
-    // FILE *fp;
-    // fp = fopen("tmp", "w+");
-
-
-    // if ((byteReceive = recv(*socketFD, buf, MAXDATASIZE-1, 0)) == -1)
-    // {
-    //     errorCode   = errno;
-    //     messageCode = RECEIVE | NEW_LINE;
-    //     return RECEIVE;
-    // }
-    //     // printf("%c", buf[0] );
-    //    fputc(buf[0], fp);
-    // while (buf[0] != EOF)
-    // {
-    //     byteReceive = recv(*socketFD, buf, MAXDATASIZE-1, 0);
-    //    fputc(buf[0], fp);
-    //     // printf("%c", buf[0] );
-    //     // errorCode   = errno;
-    //     // messageCode = RECEIVE | NEW_LINE;
-    //     // return RECEIVE;
-    // }
-
-    // fclose(fp);
-    // printf("file received\n");
-
-    // if ((byteReceive = recv(*socketFD, buf, MAXDATASIZE-1, 0)) == -1)
-    // {
-    //     errorCode   = errno;
-    //     messageCode = RECEIVE | NEW_LINE;
-    //     return RECEIVE;
-    // }
-
-    // buf[byteReceive] = '\0';
-
-    // sprintf(message, "received %s\n", buf);
-    // print(message);
+    fclose(fp);
+    printf("file received\n");
 
     close(*socketFD);
     return OK;
