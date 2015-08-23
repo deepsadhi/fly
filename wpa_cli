@@ -1,0 +1,21 @@
+p2p_find
+p2p_peers
+p2p_connect 02:40:61:c2:f3:b7 pbc
+p2p_stop_find
+
+p2p_prov_disc be:6e:64:eb:60:b6 display
+p2p_prov_disc be:6e:64:eb:60:b6 keypad
+p2p_prov_disc f8:e0:79:39:6f:0c keypad 1
+p2p_connect f8:e0:79:39:6f:0c pbc
+
+p2p_connect 02:0a:f5:85:11:00 45629034 keypad persistent
+    (WPS Method = PIN)
+
+p2p_peers
+p2p_peer <P2P Device Address>
+status
+sta
+all_sta
+list_networks
+
+p2p_connect be:6e:64:eb:60:b6 12345678 keypad persistent

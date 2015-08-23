@@ -1,0 +1,44 @@
+Check every call to malloc or realloc to see if it returned zero. Check realloc even if you are making the block smaller; in a system that rounds block sizes to a power of 2, realloc may get a different block if you ask for less space.
+
+In addition, be aware that there is a possible security problem when creating temporary files in world-writable directories. In C, you can avoid this problem by creating temporary files in this manner:
+
+fd = open (filename, O_WRONLY | O_CREAT | O_EXCL, 0600);
+
+4.7.1 --version, --help
+
+gui and command both
+
+
+int main(void)
+{
+    int ret = 0;
+    ...
+    ...
+    ...
+    if(/*some condition*/)
+        ret = 1;
+    else if(/*some condition*/)
+        ret = 2;
+    else
+        ret = -1;
+
+    return ret
+}
+
+
+buff_len = strlen(buff);
+
+while(/*Some condition*/)
+{
+
+    ...
+    ... // updating 'len' here
+    ...
+    if(len > buff_len)
+    {
+        //Do some stuff here
+    }
+    ...
+    ...
+    ...
+}
