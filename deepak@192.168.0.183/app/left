@@ -1,0 +1,4 @@
+check
+* regex IP
+* file_exists (source, destination)
+* send to destination address only

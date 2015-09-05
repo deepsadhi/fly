@@ -58,7 +58,7 @@ int16_t prepareSocket(struct addrinfo *addressInfo, int *socketFD)
             }
 
             if (bind(*socketFD, address->ai_addr, address->ai_addrlen) == -1)   // Trying to bind
-            {                                                                   // Binding failed
+            {                                                                   // Binging failed
                 close(*socketFD);
                 messageCode = BIND | NEW_LINE;
                 errorCode   = errno;

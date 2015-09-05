@@ -1,0 +1,80 @@
+    int                         socketFD;                                       // Socket file descriptor
+    struct addrinfo             *addressInfo;                                   // Address information
+
+    addressInfo = (struct addrinfo *)malloc(sizeof(struct addrinfo));           // Allocate memory
+
+    if (argc < 2 || argc > 3)
+    {
+        messageCode = ARGC | NEW_LINE;
+        printMessage();
+        return ARGC;
+    }
+
+    switch (argc)
+    {                                                                           // Receiving mode
+        case 2:
+        {
+            if (getAddress(argv[1], addressInfo) != OK)
+            {
+                printMessage();
+                return ADDRESS;
+            }
+
+            messageCode = RECEIVER;
+            if (prepareSocket(addressInfo, &socketFD)  != OK)
+            {
+                printMessage();
+                return BIND_FAIL;
+            }
+
+            if (receiveFile(&socketFD))
+            {
+                printMessage();
+                return RECEIVE;
+            }
+
+            break;
+        }
+
+        case 3:
+        {                                                                       // Sending mode
+            if (fileOpen(argv[2]) != OK)
+            {
+                printMessage();
+                return FILE_OPEN;
+            }
+
+            if (getAddress(argv[1], addressInfo) != OK)
+            {
+                printMessage();
+                return ADDRESS;
+            }
+
+            if (prepareSocket(addressInfo, &socketFD) != OK)
+            {
+                printMessage();
+                return BIND_FAIL;
+            }
+
+            if (prepareListen(&socketFD) != OK)
+            {
+                printMessage();
+                return LISTEN;
+            }
+
+            if (sendFile(&socketFD, argv[2]) != OK)
+            {
+                printMessage();
+                return SEND;
+            }
+
+            break;
+        }
+
+        default:
+        {
+            messageCode = ARGC;
+            printMessage();
+            break;
+        }
+    }
