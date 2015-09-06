@@ -26,7 +26,7 @@ int8_t getAddress(char *ip, struct addrinfo *addressInfo)
         addressHints.ai_flags       = AI_PASSIVE;                               // Use machine IP address
         response = getaddrinfo(NULL, PORT, &addressHints, &addressInformation);
     }
-    else 
+    else
     {
         response = getaddrinfo(ip  , PORT, &addressHints, &addressInformation); // Use IP provided by machine
     }

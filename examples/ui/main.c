@@ -2,6 +2,22 @@
 #include <string.h>                                                             // For strlen()
 #include <stdint.h>
 
+
+
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h> /* for strncpy */
+
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <netinet/in.h>
+#include <net/if.h>
+#include <arpa/inet.h>
+
+
+
+
 GtkBuilder      *builder;
 GObject         *windowMain;
 GObject         *progressbar;
@@ -9,12 +25,38 @@ GObject         *statusbar;
 
 void fs();
 
-int16_t prepareFileSend();
+int prepareFileSend();
+int prepareReceiveFile();
+int prepareActivate();
+
+char* myIP(char *iface, char ip[100])
+{
+    int fd;
+    struct ifreq ifr;
+
+    fd = socket(AF_INET, SOCK_DGRAM, 0);
+
+    /* I want to get an IPv4 IP address */
+    ifr.ifr_addr.sa_family = AF_INET;
+
+    /* I want IP address attached to "eth0" */
+    strncpy(ifr.ifr_name, iface, IFNAMSIZ-1);
+
+    ioctl(fd, SIOCGIFADDR, &ifr);
+
+    close(fd);
+
+    /* display result */
+    sprintf(ip, "%s", inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
+    // printf("%s\n", ip);
+}
 
 int main(int argc, char *argv[])
 {
     GObject         *menuItemQuit;
     GObject         *btnSendFile;
+    GObject         *btnReceiveFile;
+    GObject         *btnActivate;
     GObject         *listboxFiles;
 
     GError          *error;
@@ -26,6 +68,10 @@ int main(int argc, char *argv[])
     gsize           bytesWritten, bytesRead;
     const gchar *context_description="context";
     guint cid;
+
+    char            ip[100];
+    char            iface[20];
+
 
     error           = 0;
     cssFile         = "style.css";
@@ -66,18 +112,18 @@ int main(int argc, char *argv[])
     btnSendFile = gtk_builder_get_object(builder, "buttonSendFile");
     g_signal_connect(btnSendFile, "clicked", G_CALLBACK(prepareFileSend), NULL);
 
+    btnReceiveFile= gtk_builder_get_object(builder, "buttonReceiveFile");
+    g_signal_connect(btnReceiveFile, "clicked", G_CALLBACK(prepareReceiveFile), NULL);
+
+    btnActivate = gtk_builder_get_object(builder, "buttonActivate");
+    g_signal_connect(btnActivate, "clicked", G_CALLBACK(prepareActivate), NULL);
+
     progressbar = gtk_builder_get_object(builder, "progressbar");
     gtk_widget_hide(GTK_WIDGET(progressbar));
 
 
-    statusbar = gtk_builder_get_object(builder, "statusbar");
-    /* get id for the message at the top of the
-     * info stack? */
-    guint id = gtk_statusbar_get_context_id(GTK_STATUSBAR(statusbar), "info");
-    /* show the top message from the info stack
-     * ? */
-    gchar *info = "This was uninitialized";
-    gtk_statusbar_push(GTK_STATUSBAR(statusbar), id, info);
+
+
 
 
 
@@ -91,14 +137,43 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-int16_t prepareFileSend()
+int prepareReceiveFile()
+{
+}
+
+int prepareActivate()
+{
+    GObject         *iface;
+    char           *myIface;
+    char            ip[32];
+    char            info[32];
+
+    iface = gtk_builder_get_object(builder, "entryIface");
+    myIface =   (char *) gtk_entry_get_text (GTK_ENTRY(iface));
+
+    myIP(myIface, info);
+
+
+    statusbar = gtk_builder_get_object(builder, "statusbar");
+    /* get id for the message at the top of the
+     * info stack? */
+    guint id = gtk_statusbar_get_context_id(GTK_STATUSBAR(statusbar), "info");
+    /* show the top message from the info stack
+     * ? */
+    gtk_statusbar_push(GTK_STATUSBAR(statusbar), id, info);
+
+
+}
+
+
+int prepareFileSend()
 {
     GObject         *ipAddress;
     GObject         *fileChooser;
     GtkDialog       *dialogMessage;
     GtkMessageType  messageType;
     GtkDialogFlags  flags;
-    const gchar           *filePath;
+    const gchar     *filePath;
     const gchar     *receiverIPAddress;
     progressbar = gtk_builder_get_object(builder, "progressbar");
     gdouble         progressbarFill;
@@ -150,12 +225,4 @@ int16_t prepareFileSend()
     /* show the top message from the info stack
      * ? */
 gtk_statusbar_pop (GTK_STATUSBAR(statusbar), id);
-
-
-
-
-
-
-
-
 }

@@ -54,7 +54,7 @@ int16_t prepareSocket(struct addrinfo *addressInfo, int *socketFD)
                 messageCode = SET_SOCK_OPT | NEW_LINE;
                 errorCode   = errno;
                 printMessage();
-                return 1;
+                return SET_SOCK_OPT;
             }
 
             if (bind(*socketFD, address->ai_addr, address->ai_addrlen) == -1)   // Trying to bind
