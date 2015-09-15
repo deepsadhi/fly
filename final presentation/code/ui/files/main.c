@@ -99,7 +99,7 @@ char* myIP(char *iface, char ip[100])
     close(fd);
 
     /* display result */
-    sprintf(ip, "Host IP: %s", inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
+    sprintf(ip, "%s", inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
     // printf("%s\n", ip);
 }
 
@@ -586,3 +586,5 @@ int prepareFileSend()
 //      * ? */
 // gtk_statusbar_pop (GTK_STATUSBAR(statusbar), id);
 // }
+);
+//

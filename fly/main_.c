@@ -11,9 +11,6 @@
 #include <sys/wait.h>
 #include <signal.h>
 
-#include <sys/ioctl.h>
-#include <net/if.h>
-
 #define PORT    "3490"      // the port users wil be connecting to
 #define BACKLOG 10          // how many pending connection queue will hold
 #define MAXDATASIZE 8         // max number of bytes we can get at once
@@ -54,47 +51,6 @@ void *get_in_addr(struct sockaddr *sa)
     return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
-void myIP(char *iface)
-{
-    int fd;
-    char ip[100];
-    struct ifreq ifr;
-
-    fd = socket(AF_INET, SOCK_DGRAM, 0);
-
-    /* I want to get an IPv4 IP address */
-    ifr.ifr_addr.sa_family = AF_INET;
-
-    /* I want IP address attached to "eth0" */
-    strncpy(ifr.ifr_name, iface, IFNAMSIZ-1);
-
-    ioctl(fd, SIOCGIFADDR, &ifr);
-
-    close(fd);
-
-    /* display result */
-    sprintf(ip, "%s", inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
-    printf("Host IP: %s\n", ip);
-}
-
-void version()
-{
-    printf("Fly version 1.0\n");
-}
-
-void usage()
-{
-    printf("Usage:\n");
-    printf("  fly [-i <interface_name>] [-f <file_path] [-s <sender_IP] [-v]\n\n");
-    printf("Options:\n");
-    printf("  -i = inteface name\n");
-    printf("  -f = path of file to send\n");
-    printf("  -s = sender IP address to receive file from\n");
-    printf("  -v = version information\n\n");
-    printf("Example:\n");
-    printf("  fly -i wlan0\n");
-}
-
 int main(int argc, char *argv[])
 {
     int                     sockfd, new_fd;     // listen on sockd_fd, new connection on new_fd
@@ -120,8 +76,7 @@ int main(int argc, char *argv[])
 
     if (argc < 2 || argc > 3)
     {
-        usage();
-        return 0;
+        printf("Invalid! number of arguments\n");
     }
 
     memset(&hints, 0, sizeof hints);
@@ -130,27 +85,11 @@ int main(int argc, char *argv[])
     hints.ai_flags      = AI_PASSIVE;        // use my IP
 
 
-    switch (argv[1][1])
+    switch (argc)
     {
-        case 'i':
+        case 2:
         {
-            myIP(argv[2]);
-
-            return 0;
-            break;
-        }
-
-        case 'v':
-        {
-            version();
-
-            return 0;
-            break;
-        }
-
-        case 's':
-        {
-            if ((rv = getaddrinfo(argv[2], PORT, &hints, &servinfo)) != 0)
+            if ((rv = getaddrinfo(argv[1], PORT, &hints, &servinfo)) != 0)
             {
                 fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
                 return 1;
@@ -204,11 +143,10 @@ int main(int argc, char *argv[])
             printf("file received\n");
             close(sockfd);
 
-            return 0;
             break;
         }
 
-        case 'f':
+        case 3:
         {
             if ((rv = getaddrinfo(NULL, PORT, &hints, &servinfo)) != 0)
             {
@@ -329,13 +267,12 @@ int main(int argc, char *argv[])
             }
 
 
-            return 0;
             break;
         }
     }
 
 
-    usage();
+
     return 0;
 }
 
